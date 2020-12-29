@@ -27,7 +27,7 @@ contract File {
     }
     
     function share(address user) public {
-        require(!isauthorized(user));
+        require(!isauthorized(user), "ALREADY AUTHORIZED!");
         _authorized[len++] = user;
     }
     
