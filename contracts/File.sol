@@ -46,7 +46,7 @@ contract File {
     }
     
     function getUser(uint userId) public view returns(address){
-        require(userId >= len, "OUT OF RANGE");
+        require(userId <= len, "OUT OF RANGE!");
         return _authorized[userId];
     }
     
