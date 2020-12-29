@@ -37,7 +37,6 @@ contract("File", (accounts) => {
     it("Users of file", ()=> {
         return File.deployed().then( (instance) => {
             fileInstance = instance;
-            fileInstance.share(accounts[1], {from: ownerAddress});
             fileInstance.share(accounts[2], {from: ownerAddress});
             fileInstance.share(accounts[3], {from: ownerAddress});
             return fileInstance.users();
@@ -49,5 +48,43 @@ contract("File", (accounts) => {
         })
     })
 
+    it("Get user by id", ()=> {
+        return File.deployed().then( (instance) => {
+            fileInstance = instance;
+            return fileInstance.getUser(0);
+        }).then((address) => {
+            assert.equal(address, ownerAddress);
+            return fileInstance.getUser(999999999999);
+        }).then(assert.fail).catch((error) => {
+            assert.notEqual(error, undefined);
+            return fileInstance.getUser(1);
+        }).then((address) => {
+            assert.equal(address, accounts[1]);
+            return fileInstance.getUser(2);
+        }).then((address) => {
+            assert.equal(address, accounts[2]);
+            return fileInstance.getUser(3);
+        }).then((address) => {
+            assert.equal(address, accounts[3]);
+        })
+    })
+
+    it("Remove someone", ()=> {
+        return File.deployed().then((instance) => {
+            fileInstance = instance;
+            return fileInstance.users();
+        }).then((address) => {
+            assert.equal(address.includes(accounts[1]), true);
+            return fileInstance.remove_user(1);
+        }).then(() => {
+            return fileInstance.users();
+        }).then((address) => {
+            assert.equal(address.includes(accounts[1]), false);
+            return fileInstance.remove_user(0);
+        }).then(assert.fail).catch((error)=> {
+            assert.equal(error.reason, 'CANNOT DELETE YOURSELF!');
+        })
+    })
+    
     
 })
