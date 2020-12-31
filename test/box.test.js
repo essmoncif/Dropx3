@@ -84,6 +84,18 @@ contract("Box", (accounts) => {
         })
     })
 
+    it("Only my files", () => {
+        return Box.deployed().then((instance) => {
+            boxInstance = instance;
+            return boxInstance.myFiles({from: ownerAddress});
+        }).then((files) => {
+            assert.equal(files.includes(myfiles[0]), true);
+            return boxInstance.myFiles({from: accounts[1]});
+        }).then((addresses) => {
+            assert.equal(addresses.length, 0);
+        })
+    })
+
     it("Remove someone", ()=> {
         return Box.deployed().then((instance) => {
             boxInstance = instance;
