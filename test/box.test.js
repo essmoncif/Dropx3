@@ -56,6 +56,21 @@ contract("Box", (accounts) => {
         })
     })
 
+    it("Get file", () => {
+        return Box.deployed().then((instance) => {
+            boxInstance = instance;
+            return boxInstance.getFile(myfiles[0], {from: ownerAddress});
+        }).then((receipt)=> {
+            assert.equal(receipt.filename, "test.txt");
+            assert.equal(receipt.hash, "64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c");
+            assert.equal(receipt.description, "Hello world");
+            assert.notEqual(Number(receipt.created), 0);
+            return boxInstance.getFile(myfiles[0], {from: accounts[1]});
+        }).then(assert.fail).catch((error) => {
+            assert.notEqual(error, undefined);
+        })
+    })
+
     it("Remove someone", ()=> {
         return Box.deployed().then((instance) => {
             boxInstance = instance;
