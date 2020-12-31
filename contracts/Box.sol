@@ -41,6 +41,7 @@ contract Box {
     
     function addUserToFile(address user, address file) public FileCreator(file) {
         require(user != address(0));
+        require(file != address(0));
         _files[file].share(user);
         emit Share(file, msg.sender, user);
     }
