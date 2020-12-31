@@ -38,4 +38,26 @@ contract("Box", (accounts) => {
             assert.equal(error.reason, "CANNOT USE THIS METHOD!");
         })
     })
+
+    it("Remove someone", ()=> {
+        return Box.deployed().then((instance) => {
+            boxInstance = instance;
+            return boxInstance.fileUsers(myfiles[0]);
+        }).then((receipt) => {
+            assert.equal(receipt.includes(accounts[1]), true);
+            assert.equal(receipt.includes(ownerAddress), true);
+            return boxInstance.removeUser(1, myfiles[0]);
+        }).then((receipt)=> {
+            assert.equal(receipt.logs[0].event, "Remove");
+            assert.equal(receipt.logs[0].args.file, myfiles[0]);
+            assert.equal(receipt.logs[0].args.creator, ownerAddress);
+            assert.equal(receipt.logs[0].args.with, accounts[1]);
+            return boxInstance.removeUser(0, myfiles[0]);
+        }).then(assert.fail).catch((error)=> {
+            assert.equal(error.reason, "CANNOT DELETE YOURSELF!");
+            return boxInstance.removeUser.call(999999999999, myfiles[0]);
+        }).catch(assert.fail).catch((error)=>{
+            assert.notEqual(error, undefined);
+        })
+    })
 })
