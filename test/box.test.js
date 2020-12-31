@@ -22,7 +22,6 @@ contract("Box", (accounts) => {
             boxInstance = instance;
             return boxInstance.addUserToFile(accounts[1], myfiles[0]);
         }).then((receipt) => {
-            console.log(receipt.logs[0]);
             assert.equal(receipt.logs[0].event, "Share");
             assert.equal(receipt.logs[0].args.file, myfiles[0]);
             assert.equal(receipt.logs[0].args.creator, ownerAddress);
@@ -30,6 +29,13 @@ contract("Box", (accounts) => {
             return boxInstance.addUserToFile(accounts[1], myfiles[0]);
         }).then(assert.fail).catch((error) => {
             assert.equal(error.reason, "ALREADY AUTHORIZED!");
+            return boxInstance.addUserToFile(accounts[2], "0x0");
+        }).then(assert.fail).catch((error) => {
+            assert.equal(error.reason, "invalid address");
+            assert.equal(error.arg, "file");
+            return boxInstance.addUserToFile(accounts[1], myfiles[0], {from: accounts[1]});
+        }).then(assert.fail).catch((error)=> {
+            assert.equal(error.reason, "CANNOT USE THIS METHOD!");
         })
     })
 })
