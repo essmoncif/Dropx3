@@ -71,6 +71,19 @@ contract("Box", (accounts) => {
         })
     })
 
+    it("Owner of the file", ()=> {
+        return Box.deployed().then((instance) => {
+            boxInstance = instance;
+            return boxInstance.getFileOwner(myfiles[0], {from: ownerAddress});
+        }).then((address) => {
+            assert.notEqual(address, "0x0");
+            assert.equal(address, ownerAddress);
+            return boxInstance.getFileOwner(accounts[2]);
+        }).then(assert.fail).catch((error) => {
+            assert.notEqual(error, undefined);
+        })
+    })
+
     it("Remove someone", ()=> {
         return Box.deployed().then((instance) => {
             boxInstance = instance;
