@@ -39,6 +39,23 @@ contract("Box", (accounts) => {
         })
     })
 
+    it("Users of a file", () => {
+        return Box.deployed().then((instance) => {
+            boxInstance = instance;
+            return boxInstance.fileUsers(myfiles[0]);
+        }).then((addresses) => {
+            assert.equal(addresses.includes(ownerAddress), true);
+            assert.equal(addresses.includes(accounts[1]), true);
+            return boxInstance.fileUsers("0x0");
+        }).then(assert.fail).catch((error) => {
+            assert.equal(error.reason, "invalid address");
+            assert.equal(error.arg, 'file');
+            return boxInstance.fileUsers(accounts[9]);
+        }).then(assert.fail).catch((error) => {
+            assert.notEqual(error, undefined);
+        })
+    })
+
     it("Remove someone", ()=> {
         return Box.deployed().then((instance) => {
             boxInstance = instance;
